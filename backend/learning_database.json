@@ -1,0 +1,955 @@
+{
+  "teacherPreferences": {
+    "Prof. Nair": {
+      "preferredDays": {},
+      "preferredTimes": {},
+      "preferredRooms": {},
+      "acceptedSchedules": 3,
+      "rejectedSchedules": 0,
+      "feedbackHistory": [
+        {
+          "timestamp": "2026-04-08T15:03:49.010Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Monday",
+                "13:00"
+              ],
+              [
+                "Tuesday",
+                "14:00"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-2-"
+        },
+        {
+          "timestamp": "2026-04-08T15:10:55.004Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              "Monday",
+              "afternoon"
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-2-"
+        },
+        {
+          "timestamp": "2026-04-08T15:14:24.804Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Monday",
+                "13:00"
+              ],
+              [
+                "Monday",
+                "15:00"
+              ],
+              [
+                "Tuesday",
+                "14:00"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-2-"
+        }
+      ]
+    },
+    "Dr. Sharma": {
+      "preferredDays": {},
+      "preferredTimes": {},
+      "preferredRooms": {},
+      "acceptedSchedules": 3,
+      "rejectedSchedules": 0,
+      "feedbackHistory": [
+        {
+          "timestamp": "2026-04-08T15:03:54.652Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              {
+                "days": [],
+                "times": [
+                  "10:00",
+                  "11:00"
+                ],
+                "roomTypes": []
+              }
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-3-"
+        },
+        {
+          "timestamp": "2026-04-08T15:11:04.764Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              "CSE-B",
+              "Monday",
+              "Wednesday",
+              "Room 202",
+              "9:00 AM and 10:00 AM time slots"
+            ],
+            "avoidPatterns": [],
+            "suggestions": [
+              {
+                "id": "course-4",
+                "courseId": "course-4",
+                "courseName": "Operating Systems",
+                "faculty": "Dr. Sharma",
+                "sections": [
+                  "CSE-B"
+                ],
+                "room": "Room 203",
+                "sessionType": "theory",
+                "duration": 1,
+                "day": "Monday",
+                "time": "12:00",
+                "slotKeys": [
+                  "Monday-12:00"
+                ],
+                "timeLabel": "12:00",
+                "preferenceBandMatched": true,
+                "preferredDayMatched": false
+              },
+              {
+                "id": "course-5",
+                "courseId": "course-5",
+                "courseName": "Data Structures",
+                "faculty": "Dr. Sharma",
+                "sections": [
+                  "CSE-B"
+                ],
+                "room": "Room 204",
+                "sessionType": "practice",
+                "duration": 1,
+                "day": "Tuesday",
+                "time": "13:00",
+                "slotKeys": [
+                  "Tuesday-13:00"
+                ],
+                "timeLabel": "13:00",
+                "preferenceBandMatched": true,
+                "preferredDayMatched": false
+              }
+            ]
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-3-"
+        },
+        {
+          "timestamp": "2026-04-08T15:16:35.654Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Monday",
+                "10:00"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-3-"
+        }
+      ]
+    },
+    "Prof. Iyer": {
+      "preferredDays": {},
+      "preferredTimes": {},
+      "preferredRooms": {},
+      "acceptedSchedules": 3,
+      "rejectedSchedules": 0,
+      "feedbackHistory": [
+        {
+          "timestamp": "2026-04-08T15:03:56.208Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Thursday"
+              ],
+              [
+                "13:00"
+              ],
+              [
+                "Lab 1"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-4-"
+        },
+        {
+          "timestamp": "2026-04-08T15:11:14.499Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Thursday",
+                "13:00-14:00"
+              ],
+              [
+                "Lab 1"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": [
+              {
+                "id": "course-5-lecture-1",
+                "courseId": "course-5",
+                "courseName": "Introduction to Algorithms",
+                "faculty": "Prof. Iyer",
+                "sections": [
+                  "CSE-A"
+                ],
+                "room": "Lab 2",
+                "sessionType": "lecture",
+                "duration": 2,
+                "day": "Thursday",
+                "time": "11:00",
+                "slotKeys": [
+                  "Thursday-11:00",
+                  "Thursday-12:00"
+                ],
+                "timeLabel": "11:00-12:00",
+                "preferenceBandMatched": false,
+                "preferredDayMatched": true
+              },
+              {
+                "id": "course-3-lecture-1",
+                "courseId": "course-3",
+                "courseName": "Discrete Structures",
+                "faculty": "Prof. Iyer",
+                "sections": [
+                  "CSE-A"
+                ],
+                "room": "Lab 1",
+                "sessionType": "lecture",
+                "duration": 2,
+                "day": "Wednesday",
+                "time": "11:00",
+                "slotKeys": [
+                  "Wednesday-11:00",
+                  "Wednesday-12:00"
+                ],
+                "timeLabel": "11:00-12:00",
+                "preferenceBandMatched": true,
+                "preferredDayMatched": false
+              }
+            ]
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-4-"
+        },
+        {
+          "timestamp": "2026-04-08T15:15:56.320Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              {
+                "day": "Thursday",
+                "timeSlotRange": "13:00-14:00"
+              }
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-4-"
+        }
+      ]
+    },
+    "Dr. Khan": {
+      "preferredDays": {},
+      "preferredTimes": {},
+      "preferredRooms": {},
+      "acceptedSchedules": 4,
+      "rejectedSchedules": 0,
+      "feedbackHistory": [
+        {
+          "timestamp": "2026-04-08T15:03:57.900Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Tuesday",
+                "Early Morning"
+              ],
+              [
+                "Wednesday",
+                "Morning"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-5-"
+        },
+        {
+          "timestamp": "2026-04-08T15:11:16.511Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Tuesday",
+                "09:00"
+              ],
+              [
+                "Tuesday",
+                "11:00"
+              ],
+              [
+                "Wednesday",
+                "10:00"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-5-"
+        },
+        {
+          "timestamp": "2026-04-08T15:16:14.229Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Tuesday",
+                "09:00"
+              ],
+              [
+                "Tuesday",
+                "11:00"
+              ],
+              [
+                "Wednesday",
+                "10:00"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-5-"
+        },
+        {
+          "timestamp": "2026-04-08T15:16:56.540Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              {
+                "days": [
+                  "Tuesday",
+                  "Wednesday"
+                ],
+                "times": [
+                  "09:00",
+                  "10:00",
+                  "11:00"
+                ],
+                "roomTypes": [
+                  "Seminar Hall"
+                ]
+              }
+            ],
+            "avoidPatterns": [],
+            "suggestions": [
+              {
+                "courseId": "course-6",
+                "courseName": "Linear Algebra",
+                "sections": [
+                  "CSE-A",
+                  "CSE-B"
+                ],
+                "room": "Seminar Hall",
+                "sessionType": "theory",
+                "duration": 1,
+                "day": "Tuesday",
+                "time": "08:30",
+                "slotKeys": [
+                  "Tuesday-08:30"
+                ],
+                "timeLabel": "08:30",
+                "preferenceBandMatched": true,
+                "preferredDayMatched": true
+              },
+              {
+                "courseId": "course-7",
+                "courseName": "Calculus I",
+                "sections": [
+                  "CSE-A",
+                  "CSE-B"
+                ],
+                "room": "Seminar Hall",
+                "sessionType": "theory",
+                "duration": 1,
+                "day": "Tuesday",
+                "time": "12:30",
+                "slotKeys": [
+                  "Tuesday-12:30"
+                ],
+                "timeLabel": "12:30",
+                "preferenceBandMatched": true,
+                "preferredDayMatched": true
+              }
+            ]
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-5-"
+        }
+      ]
+    },
+    "Prof. Sen": {
+      "preferredDays": {},
+      "preferredTimes": {},
+      "preferredRooms": {},
+      "acceptedSchedules": 3,
+      "rejectedSchedules": 0,
+      "feedbackHistory": [
+        {
+          "timestamp": "2026-04-08T15:03:59.320Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Monday",
+                "14:00"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-6-"
+        },
+        {
+          "timestamp": "2026-04-08T15:11:18.333Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Monday",
+                "14:00"
+              ],
+              [
+                "Tuesday",
+                "15:00"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-6-"
+        },
+        {
+          "timestamp": "2026-04-08T15:16:58.410Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              [
+                "Monday",
+                "14:00"
+              ],
+              [
+                "Tuesday",
+                "15:00"
+              ]
+            ],
+            "avoidPatterns": [],
+            "suggestions": []
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-6-"
+        }
+      ]
+    },
+    "Dr. Mehta": {
+      "preferredDays": {},
+      "preferredTimes": {},
+      "preferredRooms": {},
+      "acceptedSchedules": 1,
+      "rejectedSchedules": 0,
+      "feedbackHistory": [
+        {
+          "timestamp": "2026-04-08T15:10:53.393Z",
+          "analysis": {
+            "userSatisfied": true,
+            "preferredPatterns": [
+              "Monday-09:00",
+              "Monday-11:00",
+              "Tuesday-10:00",
+              "Tuesday-13:00"
+            ],
+            "avoidPatterns": [],
+            "suggestions": [
+              {
+                "day": "Wednesday",
+                "time": "10:00",
+                "duration": 1,
+                "sessionType": "theory",
+                "room": "Room 101"
+              },
+              {
+                "day": "Thursday",
+                "time": "09:00",
+                "duration": 1,
+                "sessionType": "theory",
+                "room": "Room 101"
+              },
+              {
+                "day": "Friday",
+                "time": "08:30",
+                "duration": 1,
+                "sessionType": "theory",
+                "room": "Room 101"
+              }
+            ]
+          },
+          "scheduleHash": "{\"assignments\":[{\"id\":\"course-1-"
+        }
+      ]
+    }
+  },
+  "scheduleHistory": [
+    {
+      "timestamp": "2026-04-08T15:03:59.321Z",
+      "schedules": [
+        {
+          "days": [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+          ],
+          "times": [
+            "09:00",
+            "10:00",
+            "11:00",
+            "13:00",
+            "14:00",
+            "15:00"
+          ],
+          "assignments": [
+            {
+              "id": "course-4-practical-1",
+              "courseId": "course-4",
+              "courseName": "AI Lab",
+              "faculty": "Prof. Iyer",
+              "sections": [
+                "CSE-A"
+              ],
+              "room": "Lab 1",
+              "sessionType": "practical",
+              "duration": 2,
+              "day": "Thursday",
+              "time": "13:00",
+              "slotKeys": [
+                "Thursday-13:00",
+                "Thursday-14:00"
+              ],
+              "timeLabel": "13:00-14:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": true
+            },
+            {
+              "id": "course-1-theory-1",
+              "courseId": "course-1",
+              "courseName": "Data Structures",
+              "faculty": "Dr. Mehta",
+              "sections": [
+                "CSE-A",
+                "CSE-B"
+              ],
+              "room": "Room 101",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Monday",
+              "time": "09:00",
+              "slotKeys": [
+                "Monday-09:00"
+              ],
+              "timeLabel": "09:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-1-theory-2",
+              "courseId": "course-1",
+              "courseName": "Data Structures",
+              "faculty": "Dr. Mehta",
+              "sections": [
+                "CSE-A",
+                "CSE-B"
+              ],
+              "room": "Room 101",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Monday",
+              "time": "11:00",
+              "slotKeys": [
+                "Monday-11:00"
+              ],
+              "timeLabel": "11:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-1-theory-3",
+              "courseId": "course-1",
+              "courseName": "Data Structures",
+              "faculty": "Dr. Mehta",
+              "sections": [
+                "CSE-A",
+                "CSE-B"
+              ],
+              "room": "Room 101",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Tuesday",
+              "time": "10:00",
+              "slotKeys": [
+                "Tuesday-10:00"
+              ],
+              "timeLabel": "10:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-1-theory-4",
+              "courseId": "course-1",
+              "courseName": "Data Structures",
+              "faculty": "Dr. Mehta",
+              "sections": [
+                "CSE-A",
+                "CSE-B"
+              ],
+              "room": "Room 101",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Tuesday",
+              "time": "13:00",
+              "slotKeys": [
+                "Tuesday-13:00"
+              ],
+              "timeLabel": "13:00",
+              "preferenceBandMatched": false,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-5-theory-1",
+              "courseId": "course-5",
+              "courseName": "Discrete Maths",
+              "faculty": "Dr. Khan",
+              "sections": [
+                "CSE-A",
+                "CSE-B"
+              ],
+              "room": "Seminar Hall",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Tuesday",
+              "time": "09:00",
+              "slotKeys": [
+                "Tuesday-09:00"
+              ],
+              "timeLabel": "09:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": true
+            },
+            {
+              "id": "course-5-theory-2",
+              "courseId": "course-5",
+              "courseName": "Discrete Maths",
+              "faculty": "Dr. Khan",
+              "sections": [
+                "CSE-A",
+                "CSE-B"
+              ],
+              "room": "Seminar Hall",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Tuesday",
+              "time": "11:00",
+              "slotKeys": [
+                "Tuesday-11:00"
+              ],
+              "timeLabel": "11:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": true
+            },
+            {
+              "id": "course-5-theory-3",
+              "courseId": "course-5",
+              "courseName": "Discrete Maths",
+              "faculty": "Dr. Khan",
+              "sections": [
+                "CSE-A",
+                "CSE-B"
+              ],
+              "room": "Seminar Hall",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Wednesday",
+              "time": "10:00",
+              "slotKeys": [
+                "Wednesday-10:00"
+              ],
+              "timeLabel": "10:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": true
+            },
+            {
+              "id": "course-2-theory-1",
+              "courseId": "course-2",
+              "courseName": "Operating Systems",
+              "faculty": "Prof. Nair",
+              "sections": [
+                "CSE-A"
+              ],
+              "room": "Room 202",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Monday",
+              "time": "13:00",
+              "slotKeys": [
+                "Monday-13:00"
+              ],
+              "timeLabel": "13:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-2-theory-2",
+              "courseId": "course-2",
+              "courseName": "Operating Systems",
+              "faculty": "Prof. Nair",
+              "sections": [
+                "CSE-A"
+              ],
+              "room": "Room 202",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Monday",
+              "time": "15:00",
+              "slotKeys": [
+                "Monday-15:00"
+              ],
+              "timeLabel": "15:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-2-theory-3",
+              "courseId": "course-2",
+              "courseName": "Operating Systems",
+              "faculty": "Prof. Nair",
+              "sections": [
+                "CSE-A"
+              ],
+              "room": "Room 202",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Tuesday",
+              "time": "14:00",
+              "slotKeys": [
+                "Tuesday-14:00"
+              ],
+              "timeLabel": "14:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-3-theory-1",
+              "courseId": "course-3",
+              "courseName": "DBMS",
+              "faculty": "Dr. Sharma",
+              "sections": [
+                "CSE-B"
+              ],
+              "room": "Room 202",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Monday",
+              "time": "10:00",
+              "slotKeys": [
+                "Monday-10:00"
+              ],
+              "timeLabel": "10:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-3-theory-2",
+              "courseId": "course-3",
+              "courseName": "DBMS",
+              "faculty": "Dr. Sharma",
+              "sections": [
+                "CSE-B"
+              ],
+              "room": "Room 202",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Wednesday",
+              "time": "09:00",
+              "slotKeys": [
+                "Wednesday-09:00"
+              ],
+              "timeLabel": "09:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-3-theory-3",
+              "courseId": "course-3",
+              "courseName": "DBMS",
+              "faculty": "Dr. Sharma",
+              "sections": [
+                "CSE-B"
+              ],
+              "room": "Room 202",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Wednesday",
+              "time": "11:00",
+              "slotKeys": [
+                "Wednesday-11:00"
+              ],
+              "timeLabel": "11:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            },
+            {
+              "id": "course-6-theory-1",
+              "courseId": "course-6",
+              "courseName": "Software Engineering",
+              "faculty": "Prof. Sen",
+              "sections": [
+                "CSE-B"
+              ],
+              "room": "Room 202",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Monday",
+              "time": "14:00",
+              "slotKeys": [
+                "Monday-14:00"
+              ],
+              "timeLabel": "14:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": true
+            },
+            {
+              "id": "course-6-theory-2",
+              "courseId": "course-6",
+              "courseName": "Software Engineering",
+              "faculty": "Prof. Sen",
+              "sections": [
+                "CSE-B"
+              ],
+              "room": "Room 202",
+              "sessionType": "theory",
+              "duration": 1,
+              "day": "Tuesday",
+              "time": "15:00",
+              "slotKeys": [
+                "Tuesday-15:00"
+              ],
+              "timeLabel": "15:00",
+              "preferenceBandMatched": true,
+              "preferredDayMatched": false
+            }
+          ],
+          "conflicts": [],
+          "metrics": {
+            "totalSessions": 16,
+            "totalHoursRequired": 17,
+            "scheduledSessions": 17,
+            "unscheduledSessions": 0,
+            "satisfactionScore": 94,
+            "generationTimeLabel": "optimized",
+            "substitutionCount": 0
+          },
+          "facultyLoad": [
+            {
+              "faculty": "Dr. Mehta",
+              "courseName": "Data Structures",
+              "scheduledHours": 4,
+              "requestedHours": 4,
+              "matchPercent": 75
+            },
+            {
+              "faculty": "Prof. Nair",
+              "courseName": "Operating Systems",
+              "scheduledHours": 3,
+              "requestedHours": 3,
+              "matchPercent": 100
+            },
+            {
+              "faculty": "Dr. Sharma",
+              "courseName": "DBMS",
+              "scheduledHours": 3,
+              "requestedHours": 3,
+              "matchPercent": 100
+            },
+            {
+              "faculty": "Prof. Iyer",
+              "courseName": "AI Lab",
+              "scheduledHours": 2,
+              "requestedHours": 0,
+              "matchPercent": 0
+            },
+            {
+              "faculty": "Dr. Khan",
+              "courseName": "Discrete Maths",
+              "scheduledHours": 3,
+              "requestedHours": 3,
+              "matchPercent": 100
+            },
+            {
+              "faculty": "Prof. Sen",
+              "courseName": "Software Engineering",
+              "scheduledHours": 2,
+              "requestedHours": 2,
+              "matchPercent": 100
+            }
+          ]
+        }
+      ],
+      "scheduleCount": 1
+    }
+  ],
+  "patternDetections": [],
+  "successMetrics": {
+    "lastAnalysis": {
+      "globalBestPractices": [
+        "Scheduling theories across all days to minimize class overlap",
+        "Considering faculty load and preferences while scheduling courses"
+      ],
+      "commonSuccessFactors": [],
+      "frequentProblems": [
+        "Unsatisfied preference for course timeslots"
+      ],
+      "departmentSpecificInsights": {
+        "CSE": {
+          "totalSessions": 16,
+          "totalHoursRequired": 17,
+          "scheduledSessions": 16,
+          "unscheduledSessions": 0,
+          "satisfactionScore": 94
+        }
+      },
+      "recommendations": [
+        "Explore alternative scheduling methods",
+        "Increase the total capacity to accommodate all unscheduled sessions"
+      ]
+    }
+  },
+  "lastUpdated": "2026-04-08T15:16:58.410Z"
+}

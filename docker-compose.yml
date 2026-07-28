@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: scheduleai-mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: scheduleai-backend
+    restart: always
+    ports:
+      - '4000:4000'
+    environment:
+      - PORT=4000
+      - MONGODB_URI=mongodb://mongodb:27017/scheduleai
+      - JWT_SECRET=scheduleai-prod-secret-change-in-production
+    depends_on:
+      - mongodb
+
+  frontend:
+    build: ./frontend
+    container_name: scheduleai-frontend
+    restart: always
+    ports:
+      - '5173:5173'
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:

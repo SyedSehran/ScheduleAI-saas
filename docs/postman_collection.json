@@ -1,0 +1,102 @@
+{
+  "info": {
+    "name": "ScheduleAI Multi-Tenant SaaS API",
+    "description": "Postman API Collection for Multi-tenant ScheduleAI SaaS",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Institution Signup (Owner)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"collegeName\": \"Stanford University\",\n  \"name\": \"Dean Smith\",\n  \"email\": \"dean@stanford.edu\",\n  \"password\": \"Passw0rd!234\",\n  \"plan\": \"free\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "signup"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"dean@stanford.edu\",\n  \"password\": \"Passw0rd!234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Invite User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"prof.johnson@stanford.edu\",\n  \"role\": \"faculty\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/invitations",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "invitations"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dashboard & Resources",
+      "item": [
+        {
+          "name": "Get Dashboard Stats",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "List Timetables",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/timetables",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "timetables"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

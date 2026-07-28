@@ -1,0 +1,179 @@
+const crypto = require("crypto");
+const bcrypt = require("bcryptjs");
+const express = require("express");
+const Tenant = require("../models/Tenant");
+const User = require("../models/User");
+const Invitation = require("../models/Invitation");
+const { scopedFilter } = require("../models/tenantScopedPlugin");
+const { signToken, requireAuth, requireRole } = require("../middleware/auth");
+
+const rateLimit = require("express-rate-limit");
+
+const router = express.Router();
+
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: "Too many authentication attempts, please try again later" },
+  skip: () => process.env.NODE_ENV === "test",
+});
+
+function slugify(value) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
+
+async function uniqueSlug(name) {
+  const base = slugify(name) || "college";
+  let slug = base;
+  let suffix = 2;
+
+  while (await Tenant.exists({ slug })) {
+    slug = `${base}-${suffix}`;
+    suffix += 1;
+  }
+
+  return slug;
+}
+
+function publicUser(user) {
+  return {
+    id: user._id,
+    tenantId: user.tenantId,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    isOwner: user.isOwner,
+  };
+}
+
+router.post("/signup", authLimiter, async (req, res, next) => {
+  try {
+    const { collegeName, name, email, password, plan = "free" } = req.body || {};
+    if (!collegeName || !name || !email || !password) {
+      res.status(400).json({ error: "collegeName, name, email, and password are required" });
+      return;
+    }
+
+    const planLimit = Tenant.planLimit(plan);
+    const tenant = await Tenant.create({
+      name: collegeName,
+      slug: await uniqueSlug(collegeName),
+      plan: { name: plan, timetableLimitPerMonth: planLimit.timetableLimitPerMonth },
+    });
+
+    const user = await User.create({
+      tenantId: tenant._id,
+      name,
+      email,
+      passwordHash: await bcrypt.hash(password, 12),
+      role: "owner",
+      isOwner: true,
+    });
+
+    res.status(201).json({
+      tenant,
+      user: publicUser(user),
+      token: signToken(user),
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/login", authLimiter, async (req, res, next) => {
+  try {
+    const { email, password, tenantSlug } = req.body || {};
+    if (!email || !password) {
+      res.status(400).json({ error: "email and password are required" });
+      return;
+    }
+
+    const tenant = tenantSlug ? await Tenant.findOne({ slug: tenantSlug }) : null;
+    const filter = tenant ? { email, tenantId: tenant._id } : { email };
+    const user = await User.findOne(filter);
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      res.status(401).json({ error: "Invalid credentials" });
+      return;
+    }
+
+    res.json({ user: publicUser(user), token: signToken(user) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/invitations", requireAuth, requireRole("owner", "admin"), async (req, res, next) => {
+  try {
+    const { email, role = "student" } = req.body || {};
+    if (!email) {
+      res.status(400).json({ error: "email is required" });
+      return;
+    }
+
+    const invitation = await Invitation.create({
+      tenantId: req.tenantId,
+      email,
+      role,
+      token: crypto.randomBytes(24).toString("hex"),
+      invitedBy: req.userId,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    });
+
+    res.status(201).json({ invitation });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/invitations/accept", async (req, res, next) => {
+  try {
+    const { token, name, password } = req.body || {};
+    if (!token || !name || !password) {
+      res.status(400).json({ error: "token, name, and password are required" });
+      return;
+    }
+
+    const invitation = await Invitation.findOne({ token, status: "pending", expiresAt: { $gt: new Date() } });
+    if (!invitation) {
+      res.status(404).json({ error: "Invitation not found or expired" });
+      return;
+    }
+
+    const user = await User.create({
+      tenantId: invitation.tenantId,
+      name,
+      email: invitation.email,
+      passwordHash: await bcrypt.hash(password, 12),
+      role: invitation.role,
+    });
+
+    invitation.status = "accepted";
+    await invitation.save();
+
+    res.status(201).json({ user: publicUser(user), token: signToken(user) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/me", requireAuth, async (req, res, next) => {
+  try {
+    const user = await User.findOne(scopedFilter(req, { _id: req.userId }));
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
+
+    res.json({ user: publicUser(user) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+module.exports = router;
