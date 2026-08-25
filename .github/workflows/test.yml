@@ -13,6 +13,11 @@ jobs:
     defaults:
       run:
         working-directory: backend
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -25,12 +30,15 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install Dependencies
+        env:
+          # Never download the mongod binary during npm install — CI uses the
+          # service container above; local runs download lazily on first use.
+          MONGOMS_DISABLE_POSTINSTALL: '1'
         run: npm ci
 
-      # Tests use mongodb-memory-server, so no MongoDB service container is
-      # required — the suite is fully self-contained.
       - name: Run Test Suite
         env:
+          TEST_MONGODB_URI: mongodb://127.0.0.1:27017/scheduleai_ci_test
           JWT_SECRET: ci-test-secret-key-12345
         run: npm test
 
