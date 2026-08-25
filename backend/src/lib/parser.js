@@ -70,12 +70,27 @@ function parseBlockedDays(text) {
 }
 
 function normalizeCourse(course, index) {
-  const theoryHoursPerWeek = Math.max(0, Number(course.theoryHoursPerWeek) || 0);
-  const practicalHoursPerWeek = Math.max(0, Number(course.practicalHoursPerWeek) || 0);
-  const derivedHoursPerWeek = Math.max(1, theoryHoursPerWeek + practicalHoursPerWeek || Number(course.hoursPerWeek) || 2);
+  // Returns a finite non-negative number, or null when the field is absent/invalid.
+  const toHours = (value) => {
+    if (value == null || value === "") return null;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? Math.max(0, parsed) : null;
+  };
+
+  const theory = toHours(course.theoryHoursPerWeek);
+  const practical = toHours(course.practicalHoursPerWeek);
+  const weeklyTotal = toHours(course.hoursPerWeek);
+
+  // Some sources (e.g. the heuristic prompt parser) only supply a total
+  // hoursPerWeek. When no theory/practical split is provided, treat the
+  // weekly total as theory hours — otherwise the course would generate
+  // zero sessions and silently vanish from the timetable.
+  const theoryHoursPerWeek = theory ?? (practical == null ? (weeklyTotal ?? 0) : 0);
+  const practicalHoursPerWeek = practical ?? 0;
+  const derivedHoursPerWeek = Math.max(1, theoryHoursPerWeek + practicalHoursPerWeek || weeklyTotal || 2);
   const requiredLecturesToCover = Math.max(
     0,
-    Number(course.requiredLecturesToCover) || Number(course.requiredLectures) || theoryHoursPerWeek || derivedHoursPerWeek,
+    toHours(course.requiredLecturesToCover) ?? toHours(course.requiredLectures) ?? theoryHoursPerWeek ?? derivedHoursPerWeek,
   );
 
   return {
