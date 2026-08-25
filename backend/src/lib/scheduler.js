@@ -107,19 +107,74 @@ function generateSchedule(parsed) {
   const blockedTimes = new Set(parsed.globalRules.blockedTimes || []);
   const rooms = parsed.rooms || [];
   const sessions = buildSessions(parsed.courses || []);
-  
+
   // Track time slots used by each course across all days to prevent repetition
   const courseTimeSlotUsage = new Map();
   for (const course of parsed.courses || []) {
     courseTimeSlotUsage.set(course.id, new Set());
   }
 
-  function backtrack(index) {
-    if (index >= sessions.length) {
-      return true;
+  const largestLabCapacity = rooms
+    .filter((room) => room.type === "lab")
+    .reduce((max, room) => Math.max(max, room.capacity), 0);
+
+  /**
+   * Statically-infeasible sessions can never be placed on an EMPTY board
+   * (wrong room type, capacity too small, every day blocked, or duration
+   * colliding with blocked times). They are reported up-front instead of
+   * being fed into backtracking where they would poison the whole search.
+   */
+  function isStaticallyFeasible(session) {
+    const { course } = session;
+
+    if (session.requiredRoomType === "lab" && largestLabCapacity < course.studentCount) {
+      conflicts.push({
+        sessionId: session.id,
+        courseName: course.courseName,
+        faculty: course.faculty,
+        sections: course.sections,
+        sessionType: session.sessionType,
+        studentCount: course.studentCount,
+        reason: `No lab room can seat ${course.studentCount} students — the largest lab fits ${largestLabCapacity}.`,
+        suggestions: [
+          `Add a larger lab or split ${course.courseName} into smaller batches.`,
+          `Reduce the intake for ${course.courseName} to fit an existing lab.`,
+        ],
+      });
+      return false;
     }
 
-    const session = sessions[index];
+    const placeableDays = DAYS.filter((day) => !course.blockedDays.includes(day));
+    const hasFreeSlot = placeableDays.some((day) =>
+      TIMES.some((time) => {
+        const timeRange = getSlotRange(time, session.duration);
+        return timeRange && !timeRange.some((slot) => blockedTimes.has(slot));
+      }),
+    );
+
+    if (!hasFreeSlot) {
+      conflicts.push({
+        sessionId: session.id,
+        courseName: course.courseName,
+        faculty: course.faculty,
+        sections: course.sections,
+        sessionType: session.sessionType,
+        studentCount: course.studentCount,
+        reason: "Every potential slot for this class is blocked (blocked days/times or session length).",
+        suggestions: [
+          `Unblock at least one day for ${course.courseName}.`,
+          `Shorten the session length or review blocked times.`,
+        ],
+      });
+      return false;
+    }
+
+    return true;
+  }
+
+  const schedulable = sessions.filter(isStaticallyFeasible);
+
+  function buildCandidates(session) {
     const { course } = session;
     const candidates = [];
 
@@ -135,11 +190,11 @@ function generateSchedule(parsed) {
         }
 
         const slotKeys = timeRange.map((slot) => `${day}-${slot}`);
-        
+
         // Check if this course already uses this time slot on any other day
         const usedTimeSlots = courseTimeSlotUsage.get(course.id) || new Set();
         const timeSlotAlreadyUsed = timeRange.some((t) => usedTimeSlots.has(t));
-        
+
         const facultyBusy = assignments.some(
           (item) => item.faculty === course.faculty && overlapsSlotKeys(item.slotKeys, slotKeys),
         );
@@ -200,58 +255,101 @@ function generateSchedule(parsed) {
     }
 
     candidates.sort((left, right) => right.score - left.score);
+    return candidates;
+  }
+
+  function makeAssignment(session, course, candidate) {
+    assignments.push({
+      id: session.id,
+      courseId: course.id,
+      courseName: course.courseName,
+      faculty: course.faculty,
+      sections: course.sections,
+      room: candidate.room.name,
+      sessionType: session.sessionType,
+      duration: session.duration,
+      day: candidate.day,
+      time: candidate.time,
+      slotKeys: candidate.slotKeys,
+      timeLabel: candidate.timeRange.length > 1
+        ? `${candidate.timeRange[0]}-${candidate.timeRange[candidate.timeRange.length - 1]}`
+        : candidate.timeRange[0],
+      preferenceBandMatched: course.preferredBands.includes(slotBand(candidate.time)),
+      preferredDayMatched: course.preferredDays.includes(candidate.day),
+    });
+
+    const usedSlots = courseTimeSlotUsage.get(course.id) || new Set();
+    candidate.timeRange.forEach((time) => usedSlots.add(time));
+    courseTimeSlotUsage.set(course.id, usedSlots);
+  }
+
+  function undoAssignment(session, candidate) {
+    assignments.pop();
+    const trackedSlots = courseTimeSlotUsage.get(session.course.id);
+    candidate.timeRange.forEach((time) => trackedSlots.delete(time));
+  }
+
+  function pushDynamicConflict(session) {
+    conflicts.push({
+      sessionId: session.id,
+      courseName: session.course.courseName,
+      faculty: session.course.faculty,
+      sections: session.course.sections,
+      sessionType: session.sessionType,
+      studentCount: session.course.studentCount,
+      reason: "No clash-free slot was available for this class under the current constraints.",
+      suggestions: [
+        `Relax ${session.course.faculty}'s time preference for ${session.course.courseName}.`,
+        `Move ${session.course.courseName} to an alternate room if possible.`,
+        `Split combined sections into separate sessions to reduce contention.`,
+      ],
+    });
+  }
+
+  /**
+   * Classic backtracking over statically-feasible sessions. Returns true when
+   * every remaining session was placed, false when the branch dead-ended.
+   */
+  function backtrack(index) {
+    if (index >= schedulable.length) {
+      return true;
+    }
+
+    const session = schedulable[index];
+    const { course } = session;
+    const candidates = buildCandidates(session);
 
     for (const candidate of candidates) {
-      assignments.push({
-        id: session.id,
-        courseId: course.id,
-        courseName: course.courseName,
-        faculty: course.faculty,
-        sections: course.sections,
-        room: candidate.room.name,
-        sessionType: session.sessionType,
-        duration: session.duration,
-        day: candidate.day,
-        time: candidate.time,
-        slotKeys: candidate.slotKeys,
-        timeLabel: candidate.timeRange.length > 1
-          ? `${candidate.timeRange[0]}-${candidate.timeRange[candidate.timeRange.length - 1]}`
-          : candidate.timeRange[0],
-        preferenceBandMatched: course.preferredBands.includes(slotBand(candidate.time)),
-        preferredDayMatched: course.preferredDays.includes(candidate.day),
-      });
-      
-      // Track time slots used by this course to prevent repetition across days
-      const usedSlots = courseTimeSlotUsage.get(course.id) || new Set();
-      candidate.timeRange.forEach((time) => usedSlots.add(time));
-      courseTimeSlotUsage.set(course.id, usedSlots);
+      makeAssignment(session, course, candidate);
 
       if (backtrack(index + 1)) {
         return true;
       }
 
-      assignments.pop();
-      // Backtrack: remove from tracking
-      const trackedSlots = courseTimeSlotUsage.get(course.id);
-      candidate.timeRange.forEach((time) => trackedSlots.delete(time));
+      undoAssignment(session, candidate);
     }
 
-    conflicts.push({
-      sessionId: session.id,
-      courseName: course.courseName,
-      faculty: course.faculty,
-      sections: course.sections,
-      reason: "No clash-free slot was available for this class under the current constraints.",
-      suggestions: [
-        `Relax ${course.faculty}'s time preference for ${course.courseName}.`,
-        `Move ${course.courseName} to an alternate room if possible.`,
-        `Split combined sections into separate sessions to reduce contention.`,
-      ],
-    });
     return false;
   }
 
-  backtrack(0);
+  const solved = schedulable.length > 0 ? backtrack(0) : true;
+
+  if (!solved) {
+    // Backtracking hit a global dead-end (constraint interactions, not a bad
+    // request). Fall back to greedy placement so the institution still gets a
+    // usable partial timetable plus explainable conflicts instead of nothing.
+    assignments.length = 0;
+    for (const set of courseTimeSlotUsage.values()) set.clear();
+
+    for (const session of schedulable) {
+      const candidates = buildCandidates(session);
+      if (candidates.length > 0) {
+        makeAssignment(session, session.course, candidates[0]);
+      } else {
+        pushDynamicConflict(session);
+      }
+    }
+  }
 
   const totalSessions = sessions.length;
   const scheduledSessions = assignments.reduce((total, item) => total + item.duration, 0);

@@ -1,4 +1,4 @@
-name: Multi-Tenant ScheduleAI Tests
+name: Multi-Tenant ScheduleAI CI
 
 on:
   push:
@@ -7,15 +7,12 @@ on:
     branches: [ main ]
 
 jobs:
-  test:
+  backend-tests:
+    name: Backend — isolation, RBAC & usage-limit tests
     runs-on: ubuntu-latest
-
-    services:
-      mongodb:
-        image: mongo:6.0
-        ports:
-          - 27017:27017
-
+    defaults:
+      run:
+        working-directory: backend
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -28,14 +25,37 @@ jobs:
           cache-dependency-path: backend/package-lock.json
 
       - name: Install Dependencies
-        run: |
-          cd backend
-          npm ci
+        run: npm ci
 
-      - name: Run Isolation & Concurrency Tests
+      # Tests use mongodb-memory-server, so no MongoDB service container is
+      # required — the suite is fully self-contained.
+      - name: Run Test Suite
         env:
-          TEST_MONGODB_URI: mongodb://localhost:27017/scheduleai_ci_test
           JWT_SECRET: ci-test-secret-key-12345
-        run: |
-          cd backend
-          npm test
+        run: npm test
+
+  frontend-build:
+    name: Frontend — lint & production build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Production Build
+        run: npm run build

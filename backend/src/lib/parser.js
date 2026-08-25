@@ -237,7 +237,7 @@ function heuristicParse(prompt) {
   };
 }
 
-async function ollmaParse(prompt) {
+async function ollamaParse(prompt) {
   const ollamaAvailable = await checkOllamaStatus();
   if (!ollamaAvailable) {
     return null;
@@ -286,7 +286,7 @@ async function parsePrompt(prompt) {
   const heuristic = heuristicParse(prompt);
 
   try {
-    const viaOllama = await ollmaParse(prompt);
+    const viaOllama = await ollamaParse(prompt);
     if (viaOllama?.courses?.length) {
       return viaOllama;
     }

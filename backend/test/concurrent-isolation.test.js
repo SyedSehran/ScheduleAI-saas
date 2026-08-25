@@ -1,20 +1,15 @@
 const assert = require("node:assert/strict");
 const test = require("node:test");
-const mongoose = require("mongoose");
 const request = require("supertest");
 const { app } = require("../src/server");
-
-const TEST_MONGODB_URI =
-  process.env.TEST_MONGODB_URI || "mongodb://127.0.0.1:27017/scheduleai_concurrent_isolation_test";
+const { connectTestDb, disconnectTestDb } = require("./helpers/db");
 
 test.before(async () => {
-  await mongoose.connect(TEST_MONGODB_URI);
-  await mongoose.connection.dropDatabase();
+  await connectTestDb();
 });
 
 test.after(async () => {
-  await mongoose.connection.dropDatabase();
-  await mongoose.disconnect();
+  await disconnectTestDb();
 });
 
 async function signup(collegeName, email) {

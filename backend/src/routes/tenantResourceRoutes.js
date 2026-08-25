@@ -88,13 +88,14 @@ function makeCrudRoutes(path, Model, permissions) {
   );
 }
 
-const adminOnly = { read: ["owner", "admin"], write: ["owner", "admin"] };
 const allRolesReadAdminWrite = { read: ["owner", "admin", "faculty", "student"], write: ["owner", "admin"] };
 
 makeCrudRoutes("/faculties", Faculty, allRolesReadAdminWrite);
 makeCrudRoutes("/rooms", Room, allRolesReadAdminWrite);
 makeCrudRoutes("/sections", Section, allRolesReadAdminWrite);
-makeCrudRoutes("/timetables", Timetable, adminOnly);
+// Timetables are readable by every role (students/faculty view published
+// schedules) but only owners/admins can create, edit, or delete them.
+makeCrudRoutes("/timetables", Timetable, allRolesReadAdminWrite);
 
 router.post(
   "/timetables/from-schedule",

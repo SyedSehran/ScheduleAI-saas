@@ -1,4 +1,9 @@
-version: '3.8'
+# ScheduleAI — full local stack (MongoDB + API + web UI)
+#
+#   docker compose up --build
+#
+# Frontend : http://localhost:5173
+# API      : http://localhost:4000/api/health
 
 services:
   mongodb:
@@ -6,31 +11,42 @@ services:
     container_name: scheduleai-mongodb
     restart: always
     ports:
-      - '27017:27017'
+      - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   backend:
     build: ./backend
     container_name: scheduleai-backend
     restart: always
     ports:
-      - '4000:4000'
+      - "4000:4000"
     environment:
+      - NODE_ENV=production
       - PORT=4000
       - MONGODB_URI=mongodb://mongodb:27017/scheduleai
-      - JWT_SECRET=scheduleai-prod-secret-change-in-production
+      # Override in your shell or a .env file next to this compose file.
+      - JWT_SECRET=${JWT_SECRET:-scheduleai-dev-secret-change-in-production}
+      - JWT_EXPIRES_IN=7d
     depends_on:
-      - mongodb
+      mongodb:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
     container_name: scheduleai-frontend
     restart: always
     ports:
-      - '5173:5173'
+      - "5173:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
 
 volumes:
   mongo_data:

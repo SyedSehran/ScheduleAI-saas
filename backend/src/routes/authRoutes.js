@@ -28,6 +28,21 @@ function slugify(value) {
     .slice(0, 60);
 }
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+function validateSignupFields({ collegeName, name, email, password }) {
+  if (!collegeName || !name || !email || !password) {
+    return "collegeName, name, email, and password are required";
+  }
+  if (!EMAIL_PATTERN.test(email)) {
+    return "Please provide a valid email address";
+  }
+  if (String(password).length < 8) {
+    return "Password must be at least 8 characters long";
+  }
+  return null;
+}
+
 async function uniqueSlug(name) {
   const base = slugify(name) || "college";
   let slug = base;
@@ -55,10 +70,13 @@ function publicUser(user) {
 router.post("/signup", authLimiter, async (req, res, next) => {
   try {
     const { collegeName, name, email, password, plan = "free" } = req.body || {};
-    if (!collegeName || !name || !email || !password) {
-      res.status(400).json({ error: "collegeName, name, email, and password are required" });
+    const validationError = validateSignupFields({ collegeName, name, email, password });
+    if (validationError) {
+      res.status(400).json({ error: validationError });
       return;
     }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
 
     const planLimit = Tenant.planLimit(plan);
     const tenant = await Tenant.create({
@@ -70,7 +88,7 @@ router.post("/signup", authLimiter, async (req, res, next) => {
     const user = await User.create({
       tenantId: tenant._id,
       name,
-      email,
+      email: normalizedEmail,
       passwordHash: await bcrypt.hash(password, 12),
       role: "owner",
       isOwner: true,
@@ -94,8 +112,10 @@ router.post("/login", authLimiter, async (req, res, next) => {
       return;
     }
 
+    // Same person can own accounts at two institutions; tenantSlug disambiguates.
+    const normalizedEmail = String(email).toLowerCase().trim();
     const tenant = tenantSlug ? await Tenant.findOne({ slug: tenantSlug }) : null;
-    const filter = tenant ? { email, tenantId: tenant._id } : { email };
+    const filter = tenant ? { email: normalizedEmail, tenantId: tenant._id } : { email: normalizedEmail };
     const user = await User.findOne(filter);
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       res.status(401).json({ error: "Invalid credentials" });
@@ -111,14 +131,18 @@ router.post("/login", authLimiter, async (req, res, next) => {
 router.post("/invitations", requireAuth, requireRole("owner", "admin"), async (req, res, next) => {
   try {
     const { email, role = "student" } = req.body || {};
-    if (!email) {
-      res.status(400).json({ error: "email is required" });
+    if (!email || !EMAIL_PATTERN.test(email)) {
+      res.status(400).json({ error: "A valid email is required" });
+      return;
+    }
+    if (!["owner", "admin", "faculty", "student"].includes(role)) {
+      res.status(400).json({ error: "role must be one of owner, admin, faculty, student" });
       return;
     }
 
     const invitation = await Invitation.create({
       tenantId: req.tenantId,
-      email,
+      email: String(email).toLowerCase().trim(),
       role,
       token: crypto.randomBytes(24).toString("hex"),
       invitedBy: req.userId,
@@ -136,6 +160,10 @@ router.post("/invitations/accept", async (req, res, next) => {
     const { token, name, password } = req.body || {};
     if (!token || !name || !password) {
       res.status(400).json({ error: "token, name, and password are required" });
+      return;
+    }
+    if (String(password).length < 8) {
+      res.status(400).json({ error: "Password must be at least 8 characters long" });
       return;
     }
 

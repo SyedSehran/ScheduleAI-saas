@@ -30,13 +30,16 @@ sequenceDiagram
 
 ## Key Features
 
+- **End-to-End JWT Authentication**: The React frontend signs users in against the API (`/auth/login`, `/auth/signup`), persists the session, attaches the token via an axios interceptor, and renders role-aware navigation — the same RBAC rules are enforced on both client and server.
 - **Strict Multi-Tenant Isolation**: Compound database indexing and query-scoping middleware enforce `tenantId` boundaries on all Mongoose models (`User`, `Faculty`, `Room`, `Section`, `Timetable`, `UsageLog`, `Invitation`).
-- **JWT & Role-Based Access Control (RBAC)**: JWT tokens carry `{ userId, tenantId, role }`. Granular permissions enforced via backend middleware across four roles: `owner`, `admin`, `faculty`, and `student`.
-- **Institution Onboarding & Email Invitations**: Institution signup automatically initializes a new `Tenant` document and sets the initial user as `owner`. Owners and Admins can invite team members with role assignments.
-- **Monthly Usage Metering**: Monthly timetable generation limits (Free: 3/mo, Pro: 100/mo, Enterprise: 1000/mo) tracked via a `UsageLog` collection. Returns clean HTTP 403 Forbidden payloads when limits are reached.
-- **Backtracking Constraint Solver**: Hybrid constraint-aware scheduling engine handling room capacity, section overlaps, teacher availability, and practical lab session scheduling.
-- **Security & Rate Limiting**: Password hashing using `bcrypt` (12 salt rounds) and request rate-limiting on authentication endpoints via `express-rate-limit`.
-- **Automated Testing & CI/CD**: Automated unit/integration isolation tests, 30-request concurrent load benchmark with structured output metrics, and GitHub Actions CI workflow.
+- **Role-Based Access Control (RBAC)**: JWT tokens carry `{ userId, tenantId, role }`. Owners/admins generate and publish timetables; faculty/students get read-only views of published schedules.
+- **Institution Onboarding & Email Invitations**: Institution signup creates a new isolated `Tenant` and makes the signer-up its `owner`. Owners/admins can invite team members with expiring invitation tokens and role assignment — directly from the dashboard UI.
+- **Publish Workflow**: Admins generate a schedule with the solver, then "Publish to institution" stores it as a tenant `Timetable` document that faculty and students see instantly on login.
+- **Monthly Usage Metering**: Monthly timetable generation limits (Free: 3/mo, Pro: 100/mo, Enterprise: 1000/mo) tracked via a `UsageLog` collection. Returns clean HTTP 403 Forbidden payloads (`canUpgrade: true`) when limits are reached.
+- **Hybrid Constraint Solver**: Backtracking (with MRV/LCV ordering) + simulated-annealing improver handling room capacity, section overlaps, teacher availability, lab sessions, and lunch-break protection.
+- **Teacher Absence Auto-Cover**: Mark one teacher absent for one day; the system assigns qualified free substitutes period-by-period based on subject similarity.
+- **Security & Rate Limiting**: bcrypt password hashing (12 rounds), express-rate-limit on auth endpoints, security headers, JSON body limits, and graceful shutdown.
+- **Automated Testing & CI/CD**: Self-contained test suite (Node Test Runner + Supertest + in-memory MongoDB — zero local setup), tenant-isolation tests, a 30-request concurrent load benchmark with structured metrics, RBAC and usage-metering regression tests, plus GitHub Actions CI running backend tests and a frontend lint+build job.
 
 ---
 
@@ -86,10 +89,12 @@ Every tenant-owned document inherits the `tenantId` field via a reusable Mongoos
 Run the full stack (MongoDB + Backend + Frontend) using Docker:
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
-- Frontend: `http://localhost:5173`
-- Backend API: `http://localhost:4000`
+- Frontend (nginx-served production build): `http://localhost:5173`
+- Backend API: `http://localhost:4000/api/health`
+
+Set a strong `JWT_SECRET` env var (or a `.env` file next to `docker-compose.yml`) before any real deployment.
 
 ---
 
@@ -97,19 +102,20 @@ docker-compose up --build
 
 #### Prerequisites
 - Node.js (v18+)
-- MongoDB (running locally on `mongodb://127.0.0.1:27017` or via URI)
+- MongoDB (running locally on `mongodb://127.0.0.1:27017` or via an Atlas URI)
 
 #### Installation
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/SyedSehran/Multi-tenant-Schedule-AI.git
-   cd Multi-tenant-Schedule-AI
+   git clone https://github.com/SyedSehran/ScheduleAI-saas.git
+   cd ScheduleAI-saas
    ```
 
 2. **Backend Setup**:
    ```bash
    cd backend
+   cp .env.example .env   # then set MONGODB_URI and a strong JWT_SECRET
    npm install
    npm run dev
    ```
@@ -121,6 +127,8 @@ docker-compose up --build
    npm run dev
    ```
 
+4. **Sign up** from the app's "New institution" tab (or click *Instant demo institution*). You become the tenant **owner** and can invite faculty/students from the dashboard.
+
 ---
 
 ## API Documentation
@@ -131,12 +139,14 @@ A Postman API Collection is included under `docs/postman_collection.json`. Impor
 
 ## Running Automated Tests & Concurrency Benchmarks
 
-The project includes an automated test suite verifying tenant isolation and concurrent request safety under load:
+The test suite is fully self-contained — it spins up an in-memory MongoDB via `mongodb-memory-server`, so no local database is needed:
 
 ```bash
 cd backend
 npm test
 ```
+
+Covered: cross-tenant isolation, a 30-request concurrent isolation/load benchmark with structured metrics, RBAC enforcement (401/403 rules, owner-can-generate regression), and monthly usage-metering cutoffs.
 
 ### Sample Concurrency & Isolation Benchmark Output
 
@@ -159,7 +169,7 @@ npm test
 
 ## CI/CD Workflow
 
-A GitHub Actions workflow is located at `.github/workflows/test.yml`. It automatically provisions a MongoDB service container, installs dependencies, and runs the test suite on every `push` and `pull_request` to `main`.
+A GitHub Actions workflow lives at `.github/workflows/test.yml` with two jobs: one runs the backend test suite (no MongoDB container required thanks to the in-memory server), the other lints and production-builds the frontend. Both run on every `push` and `pull_request` to `main`.
 
 ---
 

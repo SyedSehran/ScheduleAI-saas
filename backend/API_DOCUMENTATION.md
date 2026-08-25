@@ -5,6 +5,31 @@
 
 ---
 
+## Authentication (required on nearly every endpoint)
+
+All business endpoints require a JWT obtained from `POST /auth/signup`,
+`POST /auth/login`, or `POST /auth/invitations/accept`. Send it as:
+
+```text
+Authorization: Bearer <token>
+```
+
+The token payload is `{ userId, tenantId, role }`, and every query is
+automatically scoped to the caller's `tenantId`.
+
+| Endpoints | Minimum role |
+| :--- | :--- |
+| `/auth/*`, `/health`, `/demo*` | Public |
+| `/parse*`, `/suggest/*`, `/analyze/*`, `/learn/*` (read/analysis), `/export/ical` | Any signed-in user |
+| `/schedule`, `/schedule/v2`, `/generate/auto`, `/optimize/*`, `/substitute*` | `owner` or `admin` |
+| `/timetables` writes, `/faculties`/`/rooms`/`/sections` writes | `owner` or `admin` |
+| `/timetables`, `/faculties`, `/rooms`, `/sections` reads | Any signed-in user |
+
+Generation endpoints additionally enforce the tenant's monthly plan limit and
+respond with `403 { canUpgrade: true, usage: { used, limit } }` once exceeded.
+
+---
+
 ## OPTION B: Smart Input Suggestions
 
 ### POST `/suggest/course-requirements`
